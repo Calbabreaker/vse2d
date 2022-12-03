@@ -44,35 +44,40 @@ pub struct InputContext {
 }
 
 impl InputContext {
-    pub fn is_key_pressed(&self, key_code: Keycode) -> bool {
+    pub fn key_pressed(&self, key_code: Keycode) -> bool {
         self.key_state.pressed.contains(&key_code)
     }
 
-    pub fn is_key_just_pressed(&self, key_code: Keycode) -> bool {
+    pub fn key_just_pressed(&self, key_code: Keycode) -> bool {
         self.key_state.just_pressed.contains(&key_code)
     }
 
-    pub fn is_key_just_released(&self, key_code: Keycode) -> bool {
+    pub fn key_just_released(&self, key_code: Keycode) -> bool {
         self.key_state.just_released.contains(&key_code)
     }
 
-    pub fn is_mouse_pressed(&self, mouse_code: MouseButton) -> bool {
+    pub fn mouse_pressed(&self, mouse_code: MouseButton) -> bool {
         self.mouse_state.pressed.contains(&mouse_code)
     }
 
-    pub fn is_mouse_just_pressed(&self, mouse_code: MouseButton) -> bool {
+    pub fn mouse_just_pressed(&self, mouse_code: MouseButton) -> bool {
         self.mouse_state.just_pressed.contains(&mouse_code)
     }
 
-    pub fn is_mouse_just_released(&self, mouse_code: MouseButton) -> bool {
+    pub fn mouse_just_released(&self, mouse_code: MouseButton) -> bool {
         self.mouse_state.just_released.contains(&mouse_code)
     }
 
-    pub fn process_event(&mut self, event: &Event) {
-        self.mouse_state.update();
-        self.key_state.update();
-        self.mouse_offset = glam::Vec2::ZERO;
+    pub fn mouse_position(&self) -> glam::Vec2 {
+        self.mouse_position
+    }
 
+    pub fn mouse_offset(&self) -> glam::Vec2 {
+        self.mouse_offset
+    }
+
+    /// Update an internal state with an SDL event
+    pub fn process_event(&mut self, event: &Event) {
         match event {
             Event::KeyDown {
                 keycode: Some(keycode),
@@ -94,11 +99,10 @@ impl InputContext {
         }
     }
 
-    pub fn mouse_position(&self) -> glam::Vec2 {
-        self.mouse_position
-    }
-
-    pub fn mouse_offset(&self) -> glam::Vec2 {
-        self.mouse_offset
+    /// Clear one frame only interal state from previous frame
+    pub fn update(&mut self) {
+        self.mouse_state.update();
+        self.key_state.update();
+        self.mouse_offset = glam::Vec2::ZERO;
     }
 }

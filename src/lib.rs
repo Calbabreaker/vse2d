@@ -9,3 +9,4 @@ pub use context::*;
 pub use event::*;
 
 pub use glam::{vec2, vec3, vec4, Mat4, Vec2, Vec3, Vec4};
+pub use sdl2::{keyboard::Keycode, mouse::MouseButton};

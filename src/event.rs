@@ -10,6 +10,8 @@ pub fn run<S: EventHandler>(context: Result<Context, String>, mut state: S) -> R
     let mut context = context?;
     let mut event_pump = context.sdl.event_pump()?;
     while !context.requested_quit {
+        context.input.update();
+
         for event in event_pump.poll_iter() {
             context.input.process_event(&event);
             match event {
