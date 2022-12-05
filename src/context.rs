@@ -1,4 +1,4 @@
-use crate::{input::InputContext, render::RenderContext};
+use crate::{input::InputContext, render::RenderContext, time::TimeContext};
 
 pub struct WindowConfig {
     pub(crate) title: &'static str,
@@ -11,6 +11,7 @@ pub struct WindowConfig {
 
 pub struct ContextBuilder {
     window_config: WindowConfig,
+    target_fps: u32,
 }
 
 impl ContextBuilder {
@@ -24,6 +25,7 @@ impl ContextBuilder {
                 fullscreen: false,
                 vsync: true,
             },
+            target_fps: 60,
         }
     }
 
@@ -48,6 +50,11 @@ impl ContextBuilder {
         self
     }
 
+    pub fn target_fps(&mut self, target_fps: u32) -> &mut Self {
+        self.target_fps = target_fps;
+        self
+    }
+
     pub fn build(&mut self) -> Result<Context, String> {
         let sdl = sdl2::init()?;
         let video = sdl.video()?;
@@ -59,6 +66,7 @@ impl ContextBuilder {
         Ok(Context {
             render: unsafe { RenderContext::new(&self.window_config, &video)? },
             input: InputContext::default(),
+            time: TimeContext::new(self.target_fps),
             sdl,
             requested_quit: false,
         })
@@ -71,6 +79,7 @@ pub struct Context {
     pub(crate) sdl: sdl2::Sdl,
     pub render: RenderContext,
     pub input: InputContext,
+    pub time: TimeContext,
     pub(crate) requested_quit: bool,
 }
 

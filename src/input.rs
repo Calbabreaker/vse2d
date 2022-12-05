@@ -1,8 +1,8 @@
+use sdl2::event::Event;
+pub use sdl2::{keyboard::Keycode as KeyCode, mouse::MouseButton};
 use std::{collections::HashSet, hash::Hash};
 
-use sdl2::{event::Event, keyboard::Keycode, mouse::MouseButton};
-
-pub struct InputState<T> {
+struct InputState<T> {
     pressed: HashSet<T>,
     just_pressed: HashSet<T>,
     just_released: HashSet<T>,
@@ -37,23 +37,37 @@ impl<T: Copy + Eq + Hash> InputState<T> {
 
 #[derive(Default)]
 pub struct InputContext {
-    key_state: InputState<Keycode>,
+    key_state: InputState<KeyCode>,
     mouse_state: InputState<MouseButton>,
     mouse_position: glam::Vec2,
     mouse_offset: glam::Vec2,
 }
 
 impl InputContext {
-    pub fn key_pressed(&self, key_code: Keycode) -> bool {
+    pub fn key_pressed(&self, key_code: KeyCode) -> bool {
         self.key_state.pressed.contains(&key_code)
     }
 
-    pub fn key_just_pressed(&self, key_code: Keycode) -> bool {
+    pub fn key_just_pressed(&self, key_code: KeyCode) -> bool {
         self.key_state.just_pressed.contains(&key_code)
     }
 
-    pub fn key_just_released(&self, key_code: Keycode) -> bool {
+    pub fn key_just_released(&self, key_code: KeyCode) -> bool {
         self.key_state.just_released.contains(&key_code)
+    }
+
+    pub fn key_direction(
+        &self,
+        left: KeyCode,
+        right: KeyCode,
+        up: KeyCode,
+        down: KeyCode,
+    ) -> glam::Vec2 {
+        glam::ivec2(
+            self.key_pressed(right) as i32 - self.key_pressed(left) as i32,
+            self.key_pressed(down) as i32 - self.key_pressed(up) as i32,
+        )
+        .as_vec2()
     }
 
     pub fn mouse_pressed(&self, mouse_code: MouseButton) -> bool {
